@@ -2,7 +2,7 @@
   "name": "pxg-js",
   "sideEffects": false,
   "types": "./dist/index.d.ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A convenient JS library for interacting with PXG.eth ENS names",
   "main": "./dist/index.js",
   "repository": "git@github.com:nftboi/pxg-js.git",
