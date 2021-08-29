@@ -5,7 +5,17 @@ import registrarAbi from "./contracts/registrar.json";
 import isURL from "validator/lib/isURL";
 // @ts-ignore
 import namehash from "eth-ens-namehash";
-import { AvatarType, ContractTypes, Links, Metadata, TokenInfo } from "./types";
+import {
+  AvatarType,
+  ContractTypes,
+  Links,
+  Metadata,
+  TokenInfo,
+  Web3UtilParams,
+} from "./types";
+
+export * from "./types";
+export * from "./web3.util";
 
 const CONTRACTS = {
   local: {
@@ -57,8 +67,8 @@ export default class PxgLib extends Web3Util {
     NODE: "",
   };
 
-  constructor(options?: { network?: Network }) {
-    super();
+  constructor(options?: { network?: Network } & Web3UtilParams) {
+    super(options);
     this.network = options?.network ?? "local";
     this.requestUrl = REQUEST_URL[this.network];
     this.constants.NODE = NODES[this.network];
@@ -160,7 +170,7 @@ export default class PxgLib extends Web3Util {
 
   // Allows a user to claim a PXG.eth domain using the specified Pixelglyph ID
   // input should be validated prior to using this function
-  claimFromGlyph(glyphId: string, input: string): Promise<any> {
+  claimFromGlyph(glyphId: string, input: string) {
     const contract = this.getContract("registrar");
     if (!contract) throw new Error();
     return contract.methods
@@ -309,8 +319,3 @@ export default class PxgLib extends Web3Util {
 export function normalizeIpfs(str: string) {
   return str.replace("ipfs://", "https://ipfs.infura.io/ipfs/");
 }
-
-export const pxgLib = new PxgLib({ network: "live" });
-
-// @ts-ignore
-window.pxgLib = pxgLib;

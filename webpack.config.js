@@ -11,12 +11,14 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "index.js",
     library: {
-      name: "pxgjs",
       type: "umd",
     },
   },
-  devtool: "source-map",
-  plugins: [new NodePolyfillPlugin(), new BundleAnalyzerPlugin()],
+  externals: {
+    web3: "web3",
+  },
+  // devtool: "source-map",
+  plugins: [new NodePolyfillPlugin()],
   module: {
     rules: [
       {

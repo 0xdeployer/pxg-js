@@ -1,9 +1,16 @@
 import Web3 from "web3";
+import { provider } from "web3-core";
 
 export type AvatarType = {
   address: string;
   tokenId: string;
   metadata: any;
+};
+
+export type Web3UtilParams = {
+  initWeb3?: InitWeb3Fn<any>;
+  initAccounts?: InitAccountsFn;
+  provider?: provider;
 };
 
 export type Links = {
@@ -39,5 +46,8 @@ export type TokenInfo = {
   name: string;
 };
 
-export type InitWeb3Fn = (() => Web3) | (<T>() => Web3 & T);
+export type InitWeb3Fn<T> =
+  | ((provider: provider) => Web3)
+  | ((provider: provider) => T);
+
 export type InitAccountsFn = () => Promise<string[]>;

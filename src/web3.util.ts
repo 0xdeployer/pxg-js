@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { provider } from "web3-core";
-import { InitAccountsFn, InitWeb3Fn } from "./types";
+import { InitAccountsFn, InitWeb3Fn, Web3UtilParams } from "./types";
 
 type EventCallback = (...args: any[]) => void;
 
@@ -159,14 +159,10 @@ export class Web3Util extends Emitter {
   accounts?: string[];
   pollTx?: PollTx;
   web3?: Web3;
-  initWeb3: InitWeb3Fn;
+  initWeb3: InitWeb3Fn<any>;
   initAccounts: InitAccountsFn;
 
-  constructor(params?: {
-    initWeb3?: InitWeb3Fn;
-    initAccounts?: InitAccountsFn;
-    provider?: provider;
-  }) {
+  constructor(params?: Web3UtilParams) {
     super();
     const { initWeb3, initAccounts, provider } = params ?? {};
     this.provider =
@@ -190,7 +186,7 @@ export class Web3Util extends Emitter {
 
   _setWeb3 = () => {
     if (this.provider) {
-      const web3 = this.initWeb3();
+      const web3 = this.initWeb3(this.provider);
       this.pollTx = new PollTx(web3);
       this.web3 = web3;
       window.web3 = web3;
