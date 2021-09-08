@@ -19,7 +19,7 @@ module.exports = {
   externals: {
     web3: "web3",
   },
-  devtool: "source-map",
+  // devtool: "source-map",
   plugins: [new NodePolyfillPlugin()],
   module: {
     rules: [
