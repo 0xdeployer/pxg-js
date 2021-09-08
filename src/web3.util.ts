@@ -122,7 +122,7 @@ class PollTx extends Emitter {
       );
     }
 
-    window.setTimeout(this.internalWatch, 1000);
+    setTimeout(this.internalWatch, 1000);
   };
 
   // Internal function that begins to watch transactions in pending array
@@ -165,10 +165,17 @@ export class Web3Util extends Emitter {
   constructor(params?: Web3UtilParams) {
     super();
     const { initWeb3, initAccounts, provider } = params ?? {};
-    this.provider =
-      provider ??
-      window["ethereum"] ??
-      (window.web3 && window.web3.currentProvider);
+    this.provider;
+
+    if (typeof window !== "undefined") {
+      this.provider =
+        provider ??
+        window["ethereum"] ??
+        (window.web3 && window.web3.currentProvider);
+    } else {
+      this.provider = provider;
+    }
+
     this.hasProvider = !!this.provider;
     this.initWeb3 =
       initWeb3 ??
@@ -180,7 +187,10 @@ export class Web3Util extends Emitter {
       initAccounts ??
       (() => {
         // @ts-ignore
-        return window.ethereum?.request({ method: "eth_requestAccounts" });
+        return typeof window !== "undefined"
+          ? // @ts-ignore
+            window.ethereum?.request({ method: "eth_requestAccounts" })
+          : null;
       });
   }
 
@@ -189,7 +199,10 @@ export class Web3Util extends Emitter {
       const web3 = this.initWeb3(this.provider);
       this.pollTx = new PollTx(web3);
       this.web3 = web3;
-      window.web3 = web3;
+      if (typeof window !== "undefined") {
+        window.web3 = web3;
+      }
+
       this.pollTx = new PollTx(web3);
       return true;
     } else {
@@ -199,8 +212,12 @@ export class Web3Util extends Emitter {
 
   enable = async () => {
     if (this._setWeb3()) {
-      // @ts-ignore
-      if (this.provider && this.provider.isMetaMask) {
+      if (
+        this.provider &&
+        // @ts-ignore May have this value
+        this.provider.isMetaMask &&
+        typeof window !== "undefined"
+      ) {
         // @ts-ignore
         window.ethereum.on("accountsChanged", (accounts) => {
           this.accounts = accounts;
@@ -212,10 +229,11 @@ export class Web3Util extends Emitter {
         if (!this.web3) throw new Error();
         const accounts = await this.initAccounts();
         // @ts-ignore
-        const windowWeb3 = window.web3.eth.accounts;
+        const windowWeb3 =
+          typeof window !== "undefined" ? window.web3?.eth.accounts : null;
         this.accounts = accounts || windowWeb3;
         this.emit("accountsUpdated", this.accounts);
-      } else {
+      } else if (typeof window !== "undefined") {
         // @ts-ignore
         this.accounts = window.web3.eth.accounts;
       }
