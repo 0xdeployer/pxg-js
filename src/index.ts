@@ -64,6 +64,7 @@ export default class PxgLib extends Web3Util {
 
   constants = {
     ZERO_ADDRESS,
+    PUNK_ADDRESS: "0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB",
     NODE: "",
   };
 
@@ -208,8 +209,20 @@ export default class PxgLib extends Web3Util {
         metadata: {},
       };
     }
-
     if (!this.web3) throw new Error();
+
+    if (address === this.constants.PUNK_ADDRESS) {
+      return {
+        tokenId,
+        address,
+        metadata: {
+          name: `CryptoPunk ${tokenId}`,
+          image: `https://larvalabs.com/public/images/cryptopunks/punk${String(
+            tokenId
+          ).padStart(4, "0")}.png`,
+        },
+      };
+    }
 
     const nftContract = new this.web3.eth.Contract(abi as any, address);
 
