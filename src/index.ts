@@ -245,6 +245,14 @@ export default class PxgLib extends Web3Util {
     };
   }
 
+  async getDefaultAvatarByWalletAddressHttp(
+    address: string
+  ): Promise<AvatarType> {
+    return fetch(`${this.requestUrl}/pxg/avatar/${address}`).then((res) =>
+      res.json()
+    );
+  }
+
   async getDefaultAvatarByWalletAddress(address: string): Promise<AvatarType> {
     if (!this.ens) {
       // @ts-ignore
