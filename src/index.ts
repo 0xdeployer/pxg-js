@@ -254,7 +254,7 @@ export default class PxgLib extends Web3Util {
       });
     }
 
-    let { name } = await this.ens.getName(this?.accounts?.[0]);
+    let { name } = await this.ens.getName(address);
 
     if (name && name.toLowerCase().endsWith(".pxg.eth")) {
       name = name.substring(0, name.length - 8);
