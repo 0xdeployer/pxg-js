@@ -210,3 +210,30 @@ await pxgLib.setDefaultAvatar("nftboi", CRYPTO_PUNK_ADDRESS, "259");
 ### pxgLib.getDefaultAvatar
 
 An async function that will return information about the NFT avatar for a given name. This function takes on argument, a string which is the PXG.eth subdomain.
+
+### pxgLib.getDefaultAvatarByWalletAddress
+
+An async function which can be used to get a default NFT avatar by wallet address. This method will look up the ENS reverse record, verify if it is a PXG.eth name, and then check if a default avatar has been set.
+
+This function takes on argument, a string which is the users wallet address.
+
+This function returns an object containing information about the default avatar. If no avatar is set the address property will contain a zero address.
+
+```js
+const avatar = await pxgLib.getDefaultAvatarByWalletAddress(MY_WALLET_ADDRESS);
+```
+
+The object returned will look like this:
+
+```js
+{
+  // The NFT smart contract address. May be empty address if not set
+  // pxgLib.constants.ZERO_ADDRESS can be used to check
+  address: string;
+  // Token ID of NFT.
+  tokenId: string;
+  // The metadata object containing information about the NFT
+  metadata: {
+  }
+}
+```
