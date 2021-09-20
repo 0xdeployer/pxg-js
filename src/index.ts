@@ -4,6 +4,9 @@ import resolverAbi from "./contracts/resolver.json";
 import registrarAbi from "./contracts/registrar.json";
 import isURL from "validator/lib/isURL";
 // @ts-ignore
+import ENS, { getEnsAddress } from "@ensdomains/ensjs";
+
+// @ts-ignore
 import namehash from "eth-ens-namehash";
 import {
   AvatarType,
@@ -45,7 +48,7 @@ const ABI = {
 
 const REQUEST_URL = {
   local: "http://localhost:3000",
-  rinkeby: "http://localhost:3000",
+  rinkeby: "https://pxg-dev.herokuapp.com",
   live: "https://pxg-prod.herokuapp.com",
 };
 
@@ -61,6 +64,7 @@ export default class PxgLib extends Web3Util {
   network: Network;
   contracts: ContractTypes;
   requestUrl: string;
+  ens?: any;
 
   constants = {
     ZERO_ADDRESS,
@@ -239,6 +243,29 @@ export default class PxgLib extends Web3Util {
       address,
       metadata,
     };
+  }
+
+  async getDefaultAvatarByWalletAddress(address: string): Promise<AvatarType> {
+    if (!this.ens) {
+      // @ts-ignore
+      this.ens = new ENS({
+        provider: this.provider,
+        ensAddress: getEnsAddress("1"),
+      });
+    }
+
+    let { name } = await this.ens.getName(this?.accounts?.[0]);
+
+    if (name && name.toLowerCase().endsWith(".pxg.eth")) {
+      name = name.substring(0, name.length - 8);
+      return this.getDefaultAvatar(name);
+    } else {
+      return {
+        address: this.constants.ZERO_ADDRESS,
+        tokenId: "",
+        metadata: {},
+      };
+    }
   }
 
   // Sets links for a given subdomain. User required to sign message proving ownership.
